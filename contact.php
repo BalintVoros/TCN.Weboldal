@@ -2,37 +2,30 @@
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require 'phpmailer/src/Exception.php';
-require 'phpmailer/src/PHPMailer.php';
-require 'phpmailer/src/SMTP.php';
+require './PHPMailer/src/Exception.php';
+require './PHPMailer/src/PHPMailer.php';
+require './PHPMailer/src/SMTP.php';
 
-if(isset($_POST["send"])){
-  $mail = new PHPMailer(true);
-  
-  $mail->isSMTP();
-  $mail->Host = 'smtp.gmail.com';
-  $mail->SMTPAuth = true;
-  $mail->UserName ='tcnagyvazsony@gmail.com';
-  $mail->Password = 'sagenlqrtlaoyfvy';
-  $mail->SMTPSecure = 'ssl';
-  $mail->Port=465;
+if(isset($_POST['send'])){
+    $name = htmlentities($_POST['name']);
+    $email = htmlentities($_POST['email']);
+    $subject = htmlentities($_POST['subject']);
+    $message = htmlentities($_POST['message']);
 
-  $mail->setFrom('tcnagyvazsony@gmail.com');
+    $mail = new PHPMailer(true);
+    $mail->isSMTP();
+    $mail->Host = 'smtp.gmail.com';
+    $mail->SMTPAuth = true;
+    $mail->Username = 'tcnagyvazsony@gmail.com';
+    $mail->Password = 'sagenlqrtlaoyfvy';
+    $mail->Port = 465;
+    $mail->SMTPSecure = 'ssl';
+    $mail->isHTML(true);
+    $mail->setFrom($email, $name);
+    $mail->addAddress('tcnagyvazsony@gmail.com');
+    $mail->Subject = ("$email ($subject)");
+    $mail->Body = $message;
+    $mail->send();
 
-  $mail->addAddress($_POST["email"]);
-
-  $mail-> isHTML(true);
-
-  $mail->Subject = $_POST["subject"];
-  $mail->Body = $_POST["message"];
-
-  $mail->send();
-
-  echo
-  "
-  <script>
-  alert('Az üzenet sikeresen elküldve')
-  </script>
-  "
-  }
-  ?>
+    header("Location: ./response.html");
+}
